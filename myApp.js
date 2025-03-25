@@ -1,61 +1,19 @@
 const express = require('express');
 const app = express();
+const helmet = require("helmet");
 
+// Middleware setup
+app.use(helmet()); //  Use helmet function
+app.use(express.json()); // Enable JSON parsing
+app.use(express.urlencoded({ extended: true })); // Enable URL-encoded data parsing
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-module.exports = app;
-const api = require('./server.js');
-app.use(express.static('public'));
-app.disable('strict-transport-security');
-app.use('/_api', api);
-app.get("/", function (request, response) {
-  response.sendFile(__dirname + '/views/index.html');
+// to check if the server is running
+app.get("/", (req, res) => {
+    res.send("Hello, your server is running!");
 });
-let port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Your app is listening on port ${port}`);
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
