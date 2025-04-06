@@ -1,12 +1,13 @@
 const express = require('express');
 const helmet = require('helmet');
 const bcrypt = require('bcryptjs');
+
 const app = express();
 
-// ✅ Apply helmet and hide X-Powered-By header
+// ✅ Mount helmet.hidePoweredBy() FIRST
 app.use(helmet.hidePoweredBy());
 
-// ✅ Apply other Helmet settings (like content security policy)
+// ✅ Additional helmet configuration (if required by FCC)
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -19,25 +20,22 @@ app.use(
   })
 );
 
-// ✅ Serve static files from 'public'
+// ✅ Serve static files
 app.use(express.static('public'));
 
-// ✅ Disable specific headers (this disables only the HSTS header)
-app.disable('strict-transport-security');
-
-// ✅ Route for API
+// ✅ API routes (load after helmet & static)
 const api = require('./server.js');
 app.use('/_api', api);
 
-// ✅ Route for homepage
-app.get('/', function (request, response) {
-  response.sendFile(__dirname + '/views/index.html');
+// ✅ Basic route
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/views/index.html');
 });
 
 // ✅ Start the server
 let port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`ECOTECH Info Security App Started on Port ${port}`);
+  console.log(`App started on port ${port}`);
 });
 
 module.exports = app;
