@@ -4,12 +4,10 @@ const bcrypt = require('bcryptjs');
 
 const app = express();
 
-// ✅ Mount helmet.hidePoweredBy() FIRST
-app.use(helmet.hidePoweredBy());
-
-// ✅ Additional helmet configuration (if required by FCC)
+// ✅ Proper Helmet configuration including hidePoweredBy
 app.use(
   helmet({
+    hidePoweredBy: true, // ✅ Included in single helmet() call
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
@@ -23,17 +21,17 @@ app.use(
 // ✅ Serve static files
 app.use(express.static('public'));
 
-// ✅ API routes (load after helmet & static)
+// ✅ API routes
 const api = require('./server.js');
 app.use('/_api', api);
 
-// ✅ Basic route
+// ✅ Root route
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-// ✅ Start the server
-let port = process.env.PORT || 3000;
+// ✅ Start server
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`App started on port ${port}`);
 });
