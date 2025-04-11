@@ -1,36 +1,21 @@
+// server.js
 const express = require('express');
 const helmet = require('helmet');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs'); // Added for password hashing
+
 const app = express();
 
-// Apply security headers
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", 'trusted-cdn.com'],
-    }
-  },
-  // noCache is not a valid Helmet option in latest versions; remove or use `helmet.noCache()` separately if needed
-}));
+// Hide "X-Powered-By: Express" header for security
+app.use(helmet.hidePoweredBy());
 
-// Serve static files
-app.use(express.static('public'));
-
-// Import API routes (ensure this doesn't create a circular require)
-const api = require('./server.js');
-app.use('/_api', api);
-
-// Route
-app.get("/", function (request, response) {
-  response.sendFile(__dirname + '/views/index.html');
+// Simple route to test server
+app.get('/', (req, res) => {
+  res.send('Hello from your secure Express app!');
 });
 
-// Start server
-let port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`🥦 Useful Programmer Info Security App Started on Port ${port}`);
-});
+// Use environment port (for deployment) or default to 3000
+const PORT = process.env.PORT || 3000;
 
-// Export app (for testing purposes only, if needed)
-module.exports = app;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
