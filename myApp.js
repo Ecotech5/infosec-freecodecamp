@@ -1,18 +1,36 @@
 const express = require('express');
 const helmet = require('helmet');
-const path = require('path');
 const app = express();
+const bcrypt = require('bcrypt');
 
-// Use Helmet to hide the X-Powered-By header explicitly
-app.use(helmet.hidePoweredBy());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", 'trusted-cdn.com'],
+    }
+  },
+  noCache: true
+}))
 
-// Serve static files from 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
 
-// Set up the port dynamically (for environments like Render or Heroku)
-const port = process.env.PORT || 3000;
 
-// Start the server
+
+
+
+
+
+
+
+module.exports = app;
+const api = require('./server.js');
+app.use(express.static('public'));
+app.disable('strict-transport-security');
+app.use('/_api', api);
+app.get("/", function (request, response) {
+  response.sendFile(__dirname + '/views/index.html');
+});
+let port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`App is running on port ${port}`);
+  console.log(`🥦 Useful Programmer Info Security App Started on Port ${port}`);
 });
